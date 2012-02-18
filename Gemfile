@@ -1,6 +1,7 @@
 source :rubygems
 
 gem "json", "~>1.6"
+gem "pony", "~>1.4"
 gem "redis", "~>2.2"
 gem "sinatra", "~>1.3"
 

@@ -1,12 +1,39 @@
 require "sinatra/base"
 
 require "json"
+require "pony"
 require "redis"
 
 module Temporaty
   class Application < Sinatra::Base
     get "/" do
       "Hello, world!"
+    end
+    
+    post "/incoming" do
+      the_alias_address = Temporaty::Helpers.parse_address(params["to"].downcase)
+      recipient = Temporaty::Helpers.lookup_real_email(the_alias_address)
+      if recipient
+        Pony.mail({
+          :to => recipient,
+          :from => params["from"],
+          :subject => params["subject"],
+          :body => params["text"],
+          :html_body => params["html_body"],
+          :via => :smtp,
+          :via_options => {
+            :address => "smtp.gmail.com",
+            :port => "587",
+            :enable_starttls_auto => true,
+            :user_name => ENV["SMTP_USERNAME"],
+            :password => ENV["SMTP_PASSWORD"],
+            :authentication => :plain,
+            :domain => "HELO"
+          }
+        })
+      end
+      
+      "OK"
     end
     
     post "/generate" do
@@ -38,6 +65,17 @@ module Temporaty
   class Helpers
     ALIAS_LENGTH = 8
     ALIAS_TTL = 24 * 60 * 60
+    
+    def self.lookup_real_email(full_alias_email)
+      alias_only = full_alias_email.downcase.strip.gsub('@temporaty.com', '')
+      return nil if alias_only.nil? || alias_only.length < 1
+      the_email = self.redis.get("alias:#{alias_only}")
+      the_email
+    end
+    
+    def self.parse_address(field)
+      field.nil? ? nil : field.gsub(/.*\<(.*)\>/, '\1').downcase.strip
+    end
     
     def self.generate_alias(email_address)
       return nil if email_address.nil? || !email_address.match(/^.*\@.*\..*$/)
