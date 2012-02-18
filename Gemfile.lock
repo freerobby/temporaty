@@ -8,6 +8,7 @@ GEM
       rest-client (~> 1.6.1)
       rubyzip
       term-ansicolor (~> 1.0.5)
+    json (1.6.5)
     launchy (2.0.5)
       addressable (~> 2.2.6)
     mime-types (1.17.2)
@@ -16,6 +17,7 @@ GEM
       rack
     rack-test (0.6.1)
       rack (>= 1.0)
+    redis (2.2.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (2.8.0)
@@ -39,6 +41,8 @@ PLATFORMS
 
 DEPENDENCIES
   heroku
+  json (~> 1.6)
   rack-test (~> 0.6)
+  redis (~> 2.2)
   rspec (~> 2.8)
   sinatra (~> 1.3)

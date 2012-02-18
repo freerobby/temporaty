@@ -12,5 +12,8 @@ The [Sendgrid Parse API](http://docs.sendgrid.com/documentation/api/parse-api-2/
 
 The following variables must be set:
 
+* REDIS\_HOST
+* REDIS\_PORT
+* REDIS\_PASSWORD
 * SENDGRID\_USERNAME
 * SENDGRID\_PASSWORD
